@@ -15,7 +15,7 @@ int PrepairFile ()
 
     FILE * parsed_file = fopen (PARSED_FILE_NAME, "w");
 
-    assert (!parsed_file);
+    assert (parsed_file);
 
     fprintf (parsed_file, "%s\0", pointer_to_file_data);
 
@@ -30,19 +30,19 @@ char * ParsingFile (char * not_parsed_data, size_t file_size)
 
     char * parsed_data = (char *) calloc (file_size, sizeof (char));
 
+    size_t pars_buf_size = 0;
+
     for (int i = 0; file_size > i; i++)
     {
-        if (isalpha (*not_parsed_data))
-            parsed_data[i] = not_parsed_data[i];
-
+        if (isalpha (not_parsed_data[i]))
+            parsed_data[pars_buf_size++] = not_parsed_data[i];
         else
         {
-            parsed_data[i] = '\n';
+            parsed_data[pars_buf_size++] = '\n';
 
-            while (!isalpha (not_parsed_data[i]))
-                i++;
-            
-            i--;
+            while (!isalpha (not_parsed_data[i++]));
+
+            i -= 2;
         }
     }
 

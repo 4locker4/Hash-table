@@ -7,8 +7,8 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "../inc/Utils.hpp"
+#include "../DL_list/inc/Utils.h"
 
-int    PrepairFile ();
+int PrepairFile ();
 
 #endif // PARSING_HPP

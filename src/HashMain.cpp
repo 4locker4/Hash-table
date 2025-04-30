@@ -5,10 +5,12 @@ static const char * NEG_ANSWER = "Word is not in this text\n";
 
 static const char * PARSED_FILE_NAME = "../HashTable/Text/ParsedText.txt";
 
-inline int HashCalc (char * pointer_to_data);
+inline size_t HashCalc (char * pointer_to_data);
 
 int main ()
 {
+    PrepairFile ();
+
     StartHashTable ();
 
     return 0;
@@ -16,42 +18,40 @@ int main ()
 
 void StartHashTable ()
 {
-    PrepairFile ();
-
     HASH_TABLE_DATA hash_table = {};
 
     HashTableInit (&hash_table);
 
-    HashTableCreate ()
+    HashTableCreate (&hash_table);
 }
 
-const char * FindTheWord (char * word)
-{
-    assert (word);
+// const char * FindTheWord (char * word)
+// {
+//     assert (word);
 
-    int hash = 0;
+//     int hash = 0;
     
-    HashCalc (word, &hash);
+//     HashCalc (word, &hash);
 
-    LIST_DATA list_elem = hash_table[hash];
+//     LIST_DATA list_elem = hash_table[hash];
 
-    while (list_elem.prev_elem != NULL)
-    {
-        if (strcasecmp (list_elem.elem, word))
-            return POS_ANSWER;
+//     while (list_elem.prev_elem != NULL)
+//     {
+//         if (strcasecmp (list_elem.elem, word))
+//             return POS_ANSWER;
 
-        list_elem = *list_elem.prev_elem;
-    }
+//         list_elem = *list_elem.prev_elem;
+//     }
     
-    return NEG_ANSWER;
-}
+//     return NEG_ANSWER;
+// }
 
 int HashTableInit (HASH_TABLE_DATA * hash_table_data)
 {
     assert (hash_table_data);
 
     hash_table_data->hash_table_size = HASH_TABLE_SIZE;
-    hash_table_data->list            = (LIST_DATA **) calloc (HASH_TABLE_SIZE, sizeof (LIST_DATA *));
+    hash_table_data->list            = (POINTERS *) calloc (HASH_TABLE_SIZE, sizeof (POINTERS));
     hash_table_data->n_loaded_elems  = 0;
     hash_table_data->is_init         = true;
 
@@ -72,34 +72,38 @@ int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
     {
         hash = HashCalc (data[i]);
 
-        if (CheckAvailabilityOfElem (hash_table_data->list[hash], data[i]))
+        if (CheckAvailabilityOfElem (&hash_table_data->list[hash], data[i]))
             continue;
-        
-        hash_table_data->list
 
+        PhysInsertElem (&hash_table_data->list[hash], data[i], hash_table_data->list[hash].free);
     }
+
+    return 0;
 }
 
-bool CheckAvailabilityOfElem (LIST_DATA ** list, char * elem)
+bool CheckAvailabilityOfElem (POINTERS * list, char * elem)
 {
     assert (list && elem);
 
-    size_t counter = 0;
-
-    while (list[counter]->elem != NULL)
+    if (!list->is_init)
     {
-        if (strcasecmp (list[counter]->elem, elem))
-            return true;
-        
-        counter++;
+        ListCtor (list);
+
+        return false;
     }
 
-    return false;
+    size_t counter  = 0;
+    size_t lst_size = list->size;
+    
+    if (FindElemIndex (list, elem) == ELEM_NOT_FIND)
+        return false;
+    
+    return true;
 }
 
-inline int HashCalc (char * pointer_to_data)
+inline size_t HashCalc (char * pointer_to_data)
 {
-    int hash = 0;
+    size_t hash = 0;
 
     while (isalpha (*pointer_to_data))
     {
@@ -129,9 +133,11 @@ char ** ReadData (size_t * n_elems_in_text)
         assert (word);
 
         data[i] = strcpy (word, file_data);
-    }
 
-    free (file_data);
+        while (*file_data != '\0')
+            file_data++;
+        file_data++;
+    }
 
     *n_elems_in_text = n_strings;
 

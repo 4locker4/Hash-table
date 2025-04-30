@@ -7,8 +7,8 @@
 #include <assert.h>
 #include <ctype.h>
 
-#include "./Utils.hpp"
 #include "./Parsing.hpp"
+#include "../DL_list/inc/header.h"
 
 const int HASH_TABLE_SIZE = 1500;
 
@@ -20,16 +20,18 @@ typedef struct
 
 typedef struct 
 {
-    size_t       hash_table_size = 0;
-    size_t       n_loaded_elems  = 0;
-    LIST_DATA ** list            = NULL;
-    bool         is_init         = false;
+    size_t     hash_table_size = 0;
+    size_t     n_loaded_elems  = 0;
+    POINTERS * list            = NULL;
+    bool       is_init         = false;
 
 } HASH_TABLE_DATA;
 
-void         StartHashTable ();
-int          HashTableInit  (HASH_TABLE_DATA * hash_table_data, const char * entry_data_file);
-const char * FindTheWord    (char * word);
-char **      ReadData       ();
+void         StartHashTable             ();
+int          HashTableInit              (HASH_TABLE_DATA * hash_table_data);
+//const char * FindTheWord                (char * word);
+char **      ReadData                   (size_t * n_elems_in_text);
+bool         CheckAvailabilityOfElem    (POINTERS * list, char * elem);
+int          HashTableCreate            (HASH_TABLE_DATA * hash_table_data);
 
 #endif // HASH_MAIN_HPP
