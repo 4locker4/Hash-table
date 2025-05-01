@@ -29,7 +29,7 @@ typedef struct
 
 void         StartHashTable             ();
 int          HashTableInit              (HASH_TABLE_DATA * hash_table_data);
-//const char * FindTheWord                (char * word);
+const char * FindTheWord                (HASH_TABLE_DATA * hash_table, char * word);
 char **      ReadData                   (size_t * n_elems_in_text);
 bool         CheckAvailabilityOfElem    (POINTERS * list, char * elem);
 int          HashTableCreate            (HASH_TABLE_DATA * hash_table_data);

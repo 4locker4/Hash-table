@@ -6,6 +6,7 @@ static const char * NEG_ANSWER = "Word is not in this text\n";
 static const char * PARSED_FILE_NAME     = "../HashTable/Text/ParsedText.txt";
 static const char * HASH_TABLE_DUMP_FILE = "../HashTable/Text/HashTableResult.txt";
 
+const char * FIND_WORD = "Nevsky";
 
 inline size_t HashCalc (char * pointer_to_data);
 
@@ -28,29 +29,21 @@ void StartHashTable ()
 
     OutputHashTableIntoFile (&hash_table);
 
+    FindTheWord (&hash_table, (char *) FIND_WORD);
+
     return;
 }
 
-// const char * FindTheWord (char * word)
-// {
-//     assert (word);
-
-//     int hash = 0;
+const char * FindTheWord (HASH_TABLE_DATA * hash_table, char * word)
+{
+    assert (word);
     
-//     HashCalc (word, &hash);
+    int hash = HashCalc (word);
 
-//     LIST_DATA list_elem = hash_table[hash];
+    printf ("%d - index (if not found: -1)\n",  FindElemIndex (&hash_table->list[hash], word));
 
-//     while (list_elem.prev_elem != NULL)
-//     {
-//         if (strcasecmp (list_elem.elem, word))
-//             return POS_ANSWER;
-
-//         list_elem = *list_elem.prev_elem;
-//     }
-    
-//     return NEG_ANSWER;
-// }
+    return NEG_ANSWER;
+}
 
 int HashTableInit (HASH_TABLE_DATA * hash_table_data)
 {
@@ -117,7 +110,7 @@ inline size_t HashCalc (char * pointer_to_data)
         pointer_to_data++;
     }
     
-    return hash % (HASH_TABLE_SIZE - 1);
+    return hash % HASH_TABLE_SIZE;
 }
 
 char ** ReadData (size_t * n_elems_in_text)
@@ -162,34 +155,34 @@ int OutputHashTableIntoFile (HASH_TABLE_DATA * hash_table)
 
     for (int i = 0; HASH_TABLE_SIZE > i; i += 4)
     {
-        fprintf (dump_file, "\tHASH %d\t\tHASH %d\t\tHASH %d\t\tHASH %d\t\n", i, i+ 1, i + 2, i + 3);
+        fprintf (dump_file, "|\t  HASH %4d   |\t\tHASH %4d |\t\tHASH %4d\t|\t  HASH %4d\t\n", i, i+ 1, i + 2, i + 3);
 
-        counter = 0;
-
-        //printf ("free: %d %d %d %d\n", hash_table->list[i].free, hash_table->list[i + 1].free, hash_table->list[i + 2].free, hash_table->list[i + 3].free);
+        counter = 1;
 
         while (hash_table->list[i].size     >= counter && hash_table->list[i + 1].size >= counter && 
                hash_table->list[i + 2].size >= counter && hash_table->list[i + 3].size >= counter) 
         {
             if (hash_table->list[i].free >= counter && hash_table->list[i].is_init)
-                fprintf (dump_file, "   %10s", hash_table->list[i].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s", hash_table->list[i].leaf[counter].list_elem);
             else
-                fprintf (dump_file, "   none             ");
+            fprintf (dump_file, "|       none        ");
             
             if (hash_table->list[i + 1].free >= counter && hash_table->list[i + 1].is_init)
-                fprintf (dump_file, "   %10s\n", hash_table->list[i + 1].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s", hash_table->list[i + 1].leaf[counter].list_elem);
             else
-                fprintf (dump_file, "   none             \n");
+                fprintf (dump_file, "|       none        ");
+
             
             if (hash_table->list[i + 2].free >= counter && hash_table->list[i + 2].is_init)
-                fprintf (dump_file, "   %10s", hash_table->list[i + 2].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s", hash_table->list[i + 2].leaf[counter].list_elem);
             else
-                fprintf (dump_file, "   none             ");
+                fprintf (dump_file, "|       none        ");
+
 
             if (hash_table->list[i + 3].free >= counter && hash_table->list[i + 3].is_init)
-                fprintf (dump_file, "   %10s", hash_table->list[i + 3].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s\n", hash_table->list[i + 3].leaf[counter].list_elem);
             else
-                fprintf (dump_file, "   none             ");
+                fprintf (dump_file, "|       none        \n");
                 
             counter++;
         }
