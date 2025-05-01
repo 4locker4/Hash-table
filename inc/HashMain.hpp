@@ -33,5 +33,6 @@ int          HashTableInit              (HASH_TABLE_DATA * hash_table_data);
 char **      ReadData                   (size_t * n_elems_in_text);
 bool         CheckAvailabilityOfElem    (POINTERS * list, char * elem);
 int          HashTableCreate            (HASH_TABLE_DATA * hash_table_data);
+int          OutputHashTableIntoFile    (HASH_TABLE_DATA * hash_table);
 
 #endif // HASH_MAIN_HPP
