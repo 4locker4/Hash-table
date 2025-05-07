@@ -7,6 +7,12 @@ static const char * PARSED_FILE_NAME     = "../HashTable/Text/ParsedText.txt";
 static const char * HASH_TABLE_DUMP_FILE = "../HashTable/Text/HashTableResult.txt";
 static const char * HASH_TABLE_LENGHTS   = "../HashTable/Text/Lenghts.txt";
 
+/*
+    Изменен формат чтения файла. Поэтому все, что связанно с парсингом надо переписать.
+    Такие вещи, как file_data += ... и тому подобное меняются на += sizeof (list_elem_t), так как у нас теперь
+    размер строки const. Надо кропотливо посидеть, мне сейчас лень
+*/
+
 inline size_t HashCalc (char * pointer_to_data);
 
 int main ()
@@ -24,9 +30,7 @@ void StartHashTable ()
 
     HashTableCreate (&hash_table);
 
-    //OutputHashTableIntoFile (&hash_table);
-
-    //OutputLenghts (&hash_table);
+    OutputHashTableIntoFile (&hash_table);
 
     time_t t0 = time (0);
 
@@ -128,18 +132,16 @@ list_elem_t * ReadData (size_t * n_elems_in_text)
 
     list_elem_t * data = (list_elem_t *) calloc (n_strings, sizeof (list_elem_t));
 
-    char * word = NULL;
+    list_elem_t * word = NULL;
 
     for (int i = 0; n_strings > i; i++)
     {
-        word = (char *) calloc (1, 32 * sizeof (char));
+        word = (list_elem_t *) calloc (1, sizeof (list_elem_t));
         assert (word);
 
-        data[i].list_elem_str = strcpy (word, file_data);
+        memcpy (&data[i], file_data, sizeof (list_elem_t));
 
-        while (*file_data != '\0')
-            file_data++;
-        file_data++;
+        file_data += sizeof (list_elem_t);
     }
 
     *n_elems_in_text = n_strings;
@@ -168,24 +170,24 @@ int OutputHashTableIntoFile (HASH_TABLE_DATA * hash_table)
                hash_table->list[i + 2].size >= counter && hash_table->list[i + 3].size >= counter) 
         {
             if (hash_table->list[i].free >= counter && hash_table->list[i].is_init)
-                fprintf (dump_file, "|%19s", hash_table->list[i].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s", hash_table->list[i].leaf[counter].list_elem.list_elem_str);
             else
             fprintf (dump_file, "|       none        ");
             
             if (hash_table->list[i + 1].free >= counter && hash_table->list[i + 1].is_init)
-                fprintf (dump_file, "|%19s", hash_table->list[i + 1].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s", hash_table->list[i + 1].leaf[counter].list_elem.list_elem_str);
             else
                 fprintf (dump_file, "|       none        ");
 
             
             if (hash_table->list[i + 2].free >= counter && hash_table->list[i + 2].is_init)
-                fprintf (dump_file, "|%19s", hash_table->list[i + 2].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s", hash_table->list[i + 2].leaf[counter].list_elem.list_elem_str);
             else
                 fprintf (dump_file, "|       none        ");
 
 
             if (hash_table->list[i + 3].free >= counter && hash_table->list[i + 3].is_init)
-                fprintf (dump_file, "|%19s\n", hash_table->list[i + 3].leaf[counter].list_elem);
+                fprintf (dump_file, "|%19s\n", hash_table->list[i + 3].leaf[counter].list_elem.list_elem_str);
             else
                 fprintf (dump_file, "|       none        \n");
                 

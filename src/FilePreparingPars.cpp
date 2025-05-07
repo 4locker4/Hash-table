@@ -28,23 +28,52 @@ char * ParsingFile (char * not_parsed_data, size_t file_size)
 {
     //assert (not_parsed_data);
 
-    char * parsed_data = (char *) calloc (file_size, sizeof (char));
+    size_t n_words = CountWords (not_parsed_data);
+
+    char * parsed_data = (char *) calloc (n_words, sizeof (list_elem_t));
 
     size_t pars_buf_size = 0;
 
-    for (int i = 0; file_size > i; i++)
+    size_t counter = 0;
+
+    for (int index = 0; file_size > index; index++)
     {
-        if (isalpha (not_parsed_data[i]))
-            parsed_data[pars_buf_size++] = not_parsed_data[i];
+        counter = 0;
+
+        if (isalpha (not_parsed_data[index]))
+            parsed_data[pars_buf_size++] = not_parsed_data[index];
         else
         {
             parsed_data[pars_buf_size++] = '\n';
 
-            while (!isalpha (not_parsed_data[i++]));
+            for ( ; sizeof (list_elem_t) > counter; counter++)
+                parsed_data[pars_buf_size++] = NULL;
 
-            i -= 2;
+            while (!isalpha (not_parsed_data[index++]));
+
+            index -= 2;
         }
     }
 
     return parsed_data;
+}
+
+size_t CountWords (char * text_ptr)
+{
+    assert (text_ptr);
+
+    size_t counter = 0;
+
+    while (*text_ptr != '\0')
+    {
+        while (isalpha (*text_ptr))
+            text_ptr++;
+        
+        counter++;
+
+        while (!isalpha (*text_ptr))
+            text_ptr++;
+    }
+
+    return counter;
 }

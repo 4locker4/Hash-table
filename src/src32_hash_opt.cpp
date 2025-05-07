@@ -2,6 +2,8 @@
 
 unsigned int Src32HashFunc (const char * hashing_elem)
 {
+    assert (hashing_elem);
+
     unsigned int hash = 0;
 
     __asm__(
@@ -19,6 +21,6 @@ unsigned int Src32HashFunc (const char * hashing_elem)
         :[hash] "=m"(hash)
         :[elem] "d"(hashing_elem)
         :"%rax");
-    
+        
     return hash % HASH_TABLE_SIZE;
 }
