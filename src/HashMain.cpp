@@ -5,15 +5,12 @@ static const char * NEG_ANSWER = "Word is not in this text\n";
 
 static const char * PARSED_FILE_NAME     = "../HashTable/Text/ParsedText.txt";
 static const char * HASH_TABLE_DUMP_FILE = "../HashTable/Text/HashTableResult.txt";
-
-const char * FIND_WORD = "Nevsky";
+static const char * HASH_TABLE_LENGHTS   = "../HashTable/Text/Lenghts.txt";
 
 inline size_t HashCalc (char * pointer_to_data);
 
 int main ()
 {
-    PrepairFile ();
-
     StartHashTable ();
 
     return 0;
@@ -27,21 +24,35 @@ void StartHashTable ()
 
     HashTableCreate (&hash_table);
 
-    OutputHashTableIntoFile (&hash_table);
+    //OutputHashTableIntoFile (&hash_table);
 
-    FindTheWord (&hash_table, (char *) FIND_WORD);
+    //OutputLenghts (&hash_table);
+
+    time_t t0 = time (0);
+
+    for (int i = 0; 1000000 > i; i++)
+    {
+        FindTheWord (&hash_table, &hash_table.list[i % 967].leaf[i % 5].list_elem);
+    }
+
+    time_t t1 = time (0);
+
+    printf ("The programm ran for %lf seconds\n", difftime (t1, t0));
 
     return;
 }
 
-const char * FindTheWord (HASH_TABLE_DATA * hash_table, char * word)
+const char * FindTheWord (HASH_TABLE_DATA * hash_table, list_elem_t * word)
 {
     assert (word);
     
-    int hash = HashCalc (word);
+    int hash = Src32HashFunc (word->list_elem_str);
 
-    printf ("%d - index (if not found: -1)\n",  FindElemIndex (&hash_table->list[hash], word));
+    bool res = FindElemIndex (&hash_table->list[hash], word);
 
+    if (res)
+        return POS_ANSWER;
+    
     return NEG_ANSWER;
 }
 
@@ -66,30 +77,24 @@ int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
 {
     size_t n_elems_in_text = 0;
 
-    // table_elem *
+    list_elem_t * data = ReadData (&n_elems_in_text);
 
-    char ** data = ReadData (&n_elems_in_text);
-
-    int hash = 0;
-
-    printf ("n elems: %d\n", n_elems_in_text);
+    unsigned int hash = 0;
 
     for (int i = 0; n_elems_in_text > i; i++)
     {
-        hash = HashCalc (data[i]);
+        hash = Src32HashFunc (data[i].list_elem_str);
 
-        if (CheckAvailabilityOfElem (&hash_table_data->list[hash], data[i]))
+        if (CheckAvailabilityOfElem (&hash_table_data->list[hash], &data[i]))
             continue;
 
-        printf ("Hash: %d, i: %d\n", hash, i);
-        
-        PhysInsertElem (&hash_table_data->list[hash], data[i], hash_table_data->list[hash].free - 1);
+        PhysInsertElem (&hash_table_data->list[hash], &data[i], hash_table_data->list[hash].free - 1);
     }
 
     return 0;
 }
 
-bool CheckAvailabilityOfElem (POINTERS * list, char * elem)
+bool CheckAvailabilityOfElem (POINTERS * list, list_elem_t * elem)
 {
     assert (list && elem);
 
@@ -113,7 +118,7 @@ inline size_t HashCalc (char * pointer_to_data)
     return hash % HASH_TABLE_SIZE;
 }
 
-char ** ReadData (size_t * n_elems_in_text)
+list_elem_t * ReadData (size_t * n_elems_in_text)
 {
     size_t file_size = 0;                                                       // TD file_size нам не нужен, но требуется в функции. Исправить.
 
@@ -121,7 +126,7 @@ char ** ReadData (size_t * n_elems_in_text)
 
     size_t n_strings = CountStringsAndPutZeroInstNewLine (file_data);
 
-    char ** data = (char **) calloc (n_strings, sizeof (char *));
+    list_elem_t * data = (list_elem_t *) calloc (n_strings, sizeof (list_elem_t));
 
     char * word = NULL;
 
@@ -130,7 +135,7 @@ char ** ReadData (size_t * n_elems_in_text)
         word = (char *) calloc (1, 32 * sizeof (char));
         assert (word);
 
-        data[i] = strcpy (word, file_data);
+        data[i].list_elem_str = strcpy (word, file_data);
 
         while (*file_data != '\0')
             file_data++;
@@ -144,10 +149,10 @@ char ** ReadData (size_t * n_elems_in_text)
 
 int OutputHashTableIntoFile (HASH_TABLE_DATA * hash_table)
 {
-    my_assert (hash_table);
+    assert (hash_table);
 
     FILE * dump_file = fopen (HASH_TABLE_DUMP_FILE, "w");
-    my_assert (dump_file);
+    assert (dump_file);
 
     size_t counter = 0;
 
@@ -155,7 +160,7 @@ int OutputHashTableIntoFile (HASH_TABLE_DATA * hash_table)
 
     for (int i = 0; HASH_TABLE_SIZE > i; i += 4)
     {
-        fprintf (dump_file, "|\t  HASH %4d   |\t\tHASH %4d |\t\tHASH %4d\t|\t  HASH %4d\t\n", i, i+ 1, i + 2, i + 3);
+        fprintf (dump_file, "|\t  HASH %4d     |\t\tHASH %4d   |\t\tHASH %4d\t|\t  HASH %4d\t\n", i, i+ 1, i + 2, i + 3);
 
         counter = 1;
 
@@ -190,7 +195,32 @@ int OutputHashTableIntoFile (HASH_TABLE_DATA * hash_table)
         fprintf (dump_file, "\n\n");
     }
 
-    my_assert (!fclose (dump_file));
+    fclose (dump_file);
+
+    return 0;
+}
+
+int OutputLenghts (HASH_TABLE_DATA * hash_table)
+{
+    FILE * dump_file = fopen (HASH_TABLE_LENGHTS, "w");
+
+    int size = 0;
+
+    for (int i = 0; HASH_TABLE_SIZE > i; i++)
+    {
+        size = hash_table->list[i].size;
+
+        for (int j = 0; size > j; j++)
+        {
+            if (strcmp (hash_table->list[i].leaf[j].list_elem.list_elem_str, "nononononononononon"))
+            fprintf (dump_file, "%d\n", strlen (hash_table->list[i].leaf[j].list_elem.list_elem_str));
+            
+            if (strlen (hash_table->list[i].leaf[j].list_elem.list_elem_str) == 17)
+                fprintf (dump_file, "%s\n", hash_table->list[i].leaf[j].list_elem);
+        }
+    }
+
+    fclose (dump_file);
 
     return 0;
 }

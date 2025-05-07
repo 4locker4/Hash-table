@@ -5,6 +5,7 @@
         "memory": "cpp",
         "optional": "cpp",
         "string_view": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "clocale": "cpp"
     }
 }

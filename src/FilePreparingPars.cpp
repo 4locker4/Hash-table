@@ -15,18 +15,18 @@ int PrepairFile ()
 
     FILE * parsed_file = fopen (PARSED_FILE_NAME, "w");
 
-    assert (parsed_file);
+    //assert (parsed_file);
 
     fprintf (parsed_file, "%s\0", pointer_to_file_data);
 
-    assert (!fclose (parsed_file));
+    fclose (parsed_file);
 
     return 0;
 }
 
 char * ParsingFile (char * not_parsed_data, size_t file_size)
 {
-    assert (not_parsed_data);
+    //assert (not_parsed_data);
 
     char * parsed_data = (char *) calloc (file_size, sizeof (char));
 
