@@ -1,0 +1,19 @@
+     1                                  section .text
+     2                                  
+     3                                  global asm_avx_strcmp
+     4                                  
+     5                                  asm_avx_strcmp:
+     6 00000000 55                              push rbp
+     7 00000001 4889E5                          mov rbp, rsp
+     8                                  
+     9 00000004 C5FE6F0F                        vmovdqu ymm1, [rdi]
+    10 00000008 C5F57406                        vpcmpeqb ymm0, ymm1, [rsi]
+    11 0000000C C5FDD7C0                        vpmovmskb rax, ymm0
+    12                                  
+    13 00000010 4883F0FF                        xor rax, 0xffffffff
+    13          ******************       warning: signed dword value exceeds bounds [-w+number-overflow]
+    14                                  
+    15 00000014 4889EC                          mov rsp, rbp
+    16 00000017 5D                              pop rbp
+    17                                  
+    18 00000018 C3                              ret

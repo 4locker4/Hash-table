@@ -15,7 +15,7 @@ int PrepairFile ()
 
     FILE * parsed_file = fopen (PARSED_FILE_NAME, "w");
 
-    //assert (parsed_file);
+    assert (parsed_file);
 
     fprintf (parsed_file, "%s\0", pointer_to_file_data);
 
@@ -26,7 +26,7 @@ int PrepairFile ()
 
 char * ParsingFile (char * not_parsed_data, size_t file_size)
 {
-    //assert (not_parsed_data);
+    assert (not_parsed_data);
 
     size_t n_words = CountWords (not_parsed_data);
 
@@ -36,22 +36,28 @@ char * ParsingFile (char * not_parsed_data, size_t file_size)
 
     size_t counter = 0;
 
-    for (int index = 0; file_size > index; index++)
+    for (int index = 0; file_size > index; index++, pars_buf_size++)
     {
-        counter = 0;
-
         if (isalpha (not_parsed_data[index]))
-            parsed_data[pars_buf_size++] = not_parsed_data[index];
+        {
+            parsed_data[pars_buf_size] = not_parsed_data[index];
+
+            counter++;
+        }
         else
         {
             parsed_data[pars_buf_size++] = '\n';
 
-            for ( ; sizeof (list_elem_t) > counter; counter++)
-                parsed_data[pars_buf_size++] = NULL;
+            for ( ; sizeof (list_elem_t) - 1 > counter; counter++, pars_buf_size++)
+                parsed_data[pars_buf_size] = 1;
+            
+            pars_buf_size--;
 
-            while (!isalpha (not_parsed_data[index++]));
+            while (!isalpha (not_parsed_data[index]) && (not_parsed_data[index] != '\0'))
+                index++;
 
-            index -= 2;
+            index--;
+            counter = 0;
         }
     }
 
@@ -71,7 +77,7 @@ size_t CountWords (char * text_ptr)
         
         counter++;
 
-        while (!isalpha (*text_ptr))
+        while (!isalpha (*text_ptr) && *text_ptr != '\0')
             text_ptr++;
     }
 

@@ -29,15 +29,17 @@ typedef struct
 
 } HASH_TABLE_DATA;
 
-void          StartHashTable             ();
-int           HashTableInit              (HASH_TABLE_DATA * hash_table_data);
-const char *  FindTheWord                (HASH_TABLE_DATA * hash_table, list_elem_t * word);
-list_elem_t * ReadData                   (size_t * n_elems_in_text);
-bool          CheckAvailabilityOfElem    (POINTERS * list, list_elem_t * elem);
-int           HashTableCreate            (HASH_TABLE_DATA * hash_table_data);
-int           OutputHashTableIntoFile    (HASH_TABLE_DATA * hash_table);
-int           OutputLenghts              (HASH_TABLE_DATA * hash_table);
+extern "C" int      asm_avx_strcmp             (const char * first_str, const char * second_str);
 
-unsigned int Src32HashFunc               (const char * hashing_elem);
+void                StartHashTable             ();
+int                 HashTableInit              (HASH_TABLE_DATA * hash_table_data);
+const char *        FindTheWord                (HASH_TABLE_DATA * hash_table, list_elem_t * word);
+list_elem_t *       ReadData                   (size_t * n_elems_in_text);
+bool                CheckAvailabilityOfElem    (POINTERS * list, list_elem_t * elem);
+int                 HashTableCreate            (HASH_TABLE_DATA * hash_table_data);
+int                 OutputHashTableIntoFile    (HASH_TABLE_DATA * hash_table);
+int                 OutputLenghts              (HASH_TABLE_DATA * hash_table);
+
+inline unsigned int Src32HashFunc              (const char * elem);
 
 #endif // HASH_MAIN_HPP

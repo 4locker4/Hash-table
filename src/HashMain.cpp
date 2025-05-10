@@ -1,4 +1,5 @@
 #include "../inc/HashMain.hpp"
+#include "../inc/HashFunc.hpp"
 
 static const char * POS_ANSWER = "We found it!\n";
 static const char * NEG_ANSWER = "Word is not in this text\n";
@@ -6,12 +7,6 @@ static const char * NEG_ANSWER = "Word is not in this text\n";
 static const char * PARSED_FILE_NAME     = "../HashTable/Text/ParsedText.txt";
 static const char * HASH_TABLE_DUMP_FILE = "../HashTable/Text/HashTableResult.txt";
 static const char * HASH_TABLE_LENGHTS   = "../HashTable/Text/Lenghts.txt";
-
-/*
-    Изменен формат чтения файла. Поэтому все, что связанно с парсингом надо переписать.
-    Такие вещи, как file_data += ... и тому подобное меняются на += sizeof (list_elem_t), так как у нас теперь
-    размер строки const. Надо кропотливо посидеть, мне сейчас лень
-*/
 
 inline size_t HashCalc (char * pointer_to_data);
 
@@ -26,15 +21,17 @@ void StartHashTable ()
 {
     HASH_TABLE_DATA hash_table = {};
 
+    PrepairFile ();
+
     HashTableInit (&hash_table);
 
     HashTableCreate (&hash_table);
 
-    OutputHashTableIntoFile (&hash_table);
+    //OutputHashTableIntoFile (&hash_table);
 
     time_t t0 = time (0);
 
-    for (int i = 0; 1000000 > i; i++)
+    for (int i = 0; 100000000 > i; i++)
     {
         FindTheWord (&hash_table, &hash_table.list[i % 967].leaf[i % 5].list_elem);
     }
@@ -50,7 +47,7 @@ const char * FindTheWord (HASH_TABLE_DATA * hash_table, list_elem_t * word)
 {
     assert (word);
     
-    int hash = Src32HashFunc (word->list_elem_str);
+    unsigned int hash = Src32HashFunc (&word->list_elem_str) % HASH_TABLE_SIZE;
 
     bool res = FindElemIndex (&hash_table->list[hash], word);
 
@@ -66,7 +63,6 @@ int HashTableInit (HASH_TABLE_DATA * hash_table_data)
 
     hash_table_data->hash_table_size = HASH_TABLE_SIZE;
     hash_table_data->list            = (POINTERS *) calloc (HASH_TABLE_SIZE, sizeof (POINTERS));
-    hash_table_data->n_loaded_elems  = 0;
     hash_table_data->is_init         = true;
 
     for (int i = 0; HASH_TABLE_SIZE > i; i++)
@@ -87,14 +83,14 @@ int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
 
     for (int i = 0; n_elems_in_text > i; i++)
     {
-        hash = Src32HashFunc (data[i].list_elem_str);
+        hash = Src32HashFunc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
 
         if (CheckAvailabilityOfElem (&hash_table_data->list[hash], &data[i]))
             continue;
-
+                
         PhysInsertElem (&hash_table_data->list[hash], &data[i], hash_table_data->list[hash].free - 1);
     }
-
+    
     return 0;
 }
 
@@ -132,13 +128,8 @@ list_elem_t * ReadData (size_t * n_elems_in_text)
 
     list_elem_t * data = (list_elem_t *) calloc (n_strings, sizeof (list_elem_t));
 
-    list_elem_t * word = NULL;
-
     for (int i = 0; n_strings > i; i++)
     {
-        word = (list_elem_t *) calloc (1, sizeof (list_elem_t));
-        assert (word);
-
         memcpy (&data[i], file_data, sizeof (list_elem_t));
 
         file_data += sizeof (list_elem_t);
@@ -170,24 +161,24 @@ int OutputHashTableIntoFile (HASH_TABLE_DATA * hash_table)
                hash_table->list[i + 2].size >= counter && hash_table->list[i + 3].size >= counter) 
         {
             if (hash_table->list[i].free >= counter && hash_table->list[i].is_init)
-                fprintf (dump_file, "|%19s", hash_table->list[i].leaf[counter].list_elem.list_elem_str);
+                fprintf (dump_file, "|%19s", &hash_table->list[i].leaf[counter].list_elem.list_elem_str);
             else
             fprintf (dump_file, "|       none        ");
             
             if (hash_table->list[i + 1].free >= counter && hash_table->list[i + 1].is_init)
-                fprintf (dump_file, "|%19s", hash_table->list[i + 1].leaf[counter].list_elem.list_elem_str);
+                fprintf (dump_file, "|%19s", &hash_table->list[i + 1].leaf[counter].list_elem.list_elem_str);
             else
                 fprintf (dump_file, "|       none        ");
 
             
             if (hash_table->list[i + 2].free >= counter && hash_table->list[i + 2].is_init)
-                fprintf (dump_file, "|%19s", hash_table->list[i + 2].leaf[counter].list_elem.list_elem_str);
+                fprintf (dump_file, "|%19s", &hash_table->list[i + 2].leaf[counter].list_elem.list_elem_str);
             else
                 fprintf (dump_file, "|       none        ");
 
 
             if (hash_table->list[i + 3].free >= counter && hash_table->list[i + 3].is_init)
-                fprintf (dump_file, "|%19s\n", hash_table->list[i + 3].leaf[counter].list_elem.list_elem_str);
+                fprintf (dump_file, "|%19s\n", &hash_table->list[i + 3].leaf[counter].list_elem.list_elem_str);
             else
                 fprintf (dump_file, "|       none        \n");
                 
@@ -214,10 +205,10 @@ int OutputLenghts (HASH_TABLE_DATA * hash_table)
 
         for (int j = 0; size > j; j++)
         {
-            if (strcmp (hash_table->list[i].leaf[j].list_elem.list_elem_str, "nononononononononon"))
-            fprintf (dump_file, "%d\n", strlen (hash_table->list[i].leaf[j].list_elem.list_elem_str));
+            if (strcmp (&hash_table->list[i].leaf[j].list_elem.list_elem_str, "nononononononononon"))
+            fprintf (dump_file, "%d\n", strlen (&hash_table->list[i].leaf[j].list_elem.list_elem_str));
             
-            if (strlen (hash_table->list[i].leaf[j].list_elem.list_elem_str) == 17)
+            if (strlen (&hash_table->list[i].leaf[j].list_elem.list_elem_str) == 17)
                 fprintf (dump_file, "%s\n", hash_table->list[i].leaf[j].list_elem);
         }
     }
