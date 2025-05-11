@@ -8,7 +8,7 @@ static const char * PARSED_FILE_NAME     = "../HashTable/Text/ParsedText.txt";
 static const char * HASH_TABLE_DUMP_FILE = "../HashTable/Text/HashTableResult.txt";
 static const char * HASH_TABLE_LENGHTS   = "../HashTable/Text/Lenghts.txt";
 
-inline size_t HashCalc (char * pointer_to_data);
+size_t HashCalc (char * pointer_to_data);
 
 int main ()
 {
@@ -47,7 +47,7 @@ const char * FindTheWord (HASH_TABLE_DATA * hash_table, list_elem_t * word)
 {
     assert (word);
     
-    unsigned int hash = Src32HashFunc (&word->list_elem_str) % HASH_TABLE_SIZE;
+    unsigned int hash = HashCalc (&word->list_elem_str) % HASH_TABLE_SIZE;
 
     bool res = FindElemIndex (&hash_table->list[hash], word);
 
@@ -83,7 +83,7 @@ int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
 
     for (int i = 0; n_elems_in_text > i; i++)
     {
-        hash = Src32HashFunc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
+        hash = HashCalc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
 
         if (CheckAvailabilityOfElem (&hash_table_data->list[hash], &data[i]))
             continue;
@@ -104,7 +104,7 @@ bool CheckAvailabilityOfElem (POINTERS * list, list_elem_t * elem)
     return true;
 }
 
-inline size_t HashCalc (char * pointer_to_data)
+size_t HashCalc (char * pointer_to_data)
 {
     size_t hash = 0;
 
@@ -115,7 +115,7 @@ inline size_t HashCalc (char * pointer_to_data)
         pointer_to_data++;
     }
     
-    return hash % HASH_TABLE_SIZE;
+    return hash;
 }
 
 list_elem_t * ReadData (size_t * n_elems_in_text)

@@ -29,8 +29,6 @@ typedef struct
 
 } HASH_TABLE_DATA;
 
-extern "C" int      asm_avx_strcmp             (const char * first_str, const char * second_str);
-
 void                StartHashTable             ();
 int                 HashTableInit              (HASH_TABLE_DATA * hash_table_data);
 const char *        FindTheWord                (HASH_TABLE_DATA * hash_table, list_elem_t * word);
