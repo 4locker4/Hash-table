@@ -344,7 +344,7 @@ bool avx_strcmp (list_elem_t * first_str, list_elem_t second_str)
     return ~(_mm256_movemask_epi8 (_mm256_cmpeq_epi8 (__first_str, __second_str)));
 }
 ```
-\- Оптимизация strcmp ()
+\- Оптимизация strcmp ().
 
 Произведем профилирование повторно.
 
@@ -410,7 +410,7 @@ asm_avx_strcmp:
 
         ret
 ```
-\- Код strcmp () на языке assembler с использованием ymm регистров
+\- Код strcmp () на языке assembler с использованием ymm регистров.
 
 Произведем профилирование повторно.
 
