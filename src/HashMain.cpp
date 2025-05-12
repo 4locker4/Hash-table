@@ -36,7 +36,7 @@ const char * FindTheWord (HASH_TABLE_DATA * hash_table, list_elem_t * word)
 {
     assert (word);
     
-    unsigned int hash = HashCalc (&word->list_elem_str) % HASH_TABLE_SIZE;
+    unsigned int hash = Crc32HashFunc (&word->list_elem_str) % HASH_TABLE_SIZE;
 
     bool res = FindElemIndex (&hash_table->list[hash], word);
 
@@ -72,7 +72,7 @@ int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
 
     for (int i = 0; n_elems_in_text > i; i++)
     {
-        hash = HashCalc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
+        hash = Crc32HashFunc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
 
         if (CheckAvailabilityOfElem (&hash_table_data->list[hash], &data[i]))
             continue;
