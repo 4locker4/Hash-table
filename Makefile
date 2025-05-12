@@ -7,7 +7,7 @@ CFLAGS = -c -O3 -msse4.2 -mavx -mavx2 -masm=intel -Wshadow -Winit-self -Wredunda
 	-Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing   	\
 	-Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -Werror=vla -D_DEBUG -D_EJUDGE_CLIENT_SIDE
 
-RELEASEFLAGS = -c -O0 -msse4.2 -mavx -mavx2 -masm=intel -D NDEBUG 
+RELEASEFLAGS = -c -O3 -msse4.2 -mavx -mavx2 -masm=intel -D NDEBUG 
 
 INCLUDES = ./inc/HashMain.hpp ./DL_list/inc/Errors.h ./DL_list/inc/header.h ./DL_list/inc/Utils.h 					\
 		   ./DL_list/inc/Asserts.h ./inc/Parsing.hpp ./inc/HashFunc.hpp
