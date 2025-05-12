@@ -107,7 +107,7 @@ static inline unsigned int LenghtCalc (const char* elem)
 ```
 </details>
 
-<img src="OptimisationsImgs/LenghtsDiog.png" width="500">
+<img src="OptimisationsImgs/LenghtsDiog.png" width="1000">
 
 Среднее количество коллизий на ключ = 107. Очевидно, что масштабирование хеш-таблицы, которая использует данную хеш-функцию, не принесет значимых результатов, так как длина слова редко превышает 25 символов.
 
@@ -133,7 +133,7 @@ static inline unsigned int AsciiSumCalc (const char* elem)
 ```
 </details>
 
-<img src="OptimisationsImgs/ASCIIhash.png" width="500">
+<img src="OptimisationsImgs/ASCIIhash.png" width="1000">
 
 Видно, что дисперсия в данной функции слишком велика, из-за чего время поиска различных элементов может сильно варьироваться.
 
@@ -160,11 +160,11 @@ static inline unsigned int DJB2Hash (const char* elem)
 ```
 </details>
 
-<img src="OptimisationsImgs/DJB2Collisions.png" width="500">
+<img src="OptimisationsImgs/DJB2Collisions.png" width="1000">
 
 В данной функции распределение элементов уже значительно лучше. Попробуем увеличить размер таблицы.
 
-<img src="OptimisationsImgs/DJB2Updated.png" width="500">
+<img src="OptimisationsImgs/DJB2Updated.png" width="1000">
 
 Видно, что при увеличении хеш-таблицы до 3000 ячеек, растет дисперсия. При дальнейшем масштабировании дисперсия будет только увеличиваться.
 
@@ -195,11 +195,11 @@ static inline unsigned int JENKINS (const char* elem)
 ```
 </details>
 
-<img src="OptimisationsImgs/JENKINSHash.png" width="500">
+<img src="OptimisationsImgs/JENKINSHash.png" width="1000">
 
 Данная хеш-функция показывает хорошее распределение. Попробуем увеличить размер хеш-таблицы.
 
-<img src="OptimisationsImgs/JENKINSUpdate.png" width="500">
+<img src="OptimisationsImgs/JENKINSUpdate.png" width="1000">
 
 JENKINS - подходящая хеш-функция. Продолжим исследование дальше.
 
@@ -225,15 +225,15 @@ static inline unsigned int Adler_32 (const char* elem)
 ```
 </details>
 
-<img src="OptimisationsImgs/Adler1000.png" width="500">
+<img src="OptimisationsImgs/Adler1000.png" width="1000">
 
 На 1000 ячеек у Adler_32 высокая дисперсия. При увеличении до 5000 ячеек дисперсия уменьшается.
 
-<img src="OptimisationsImgs/Adler5000.png" width="500">
+<img src="OptimisationsImgs/Adler5000.png" width="1000">
 
 Проведем проверку для 500 элементов. 
 
-<img src="OptimisationsImgs/Adler500.png" width="500">
+<img src="OptimisationsImgs/Adler500.png" width="1000">
 
 Видно, что дисперсия растет с уменьшением размера хеш-таблици.
 
@@ -269,7 +269,7 @@ static inline unsigned int CRC32 (const char* elem)
 
 <summary> 1. CRC32, размер таблицы 500 элементов.</summary>
 
-<img src="OptimisationsImgs/CRC32500.png" width="500">
+<img src="OptimisationsImgs/CRC32500.png" width="1000">
 
 </details>
 
@@ -277,7 +277,7 @@ static inline unsigned int CRC32 (const char* elem)
 
 <summary> 2. CRC32, размер таблицы 1000 элементов.</summary>
 
-<img src="OptimisationsImgs/CRC32.png" width="500">
+<img src="OptimisationsImgs/CRC32.png" width="1000">
 
 </details>
 
@@ -285,7 +285,7 @@ static inline unsigned int CRC32 (const char* elem)
 
 <summary> 3. CRC32, размер таблицы 5000 элементов.</summary>
 
-<img src="OptimisationsImgs/CRC325000.png" width="500">
+<img src="OptimisationsImgs/CRC325000.png" width="1000">
 
 </details>
 
@@ -301,11 +301,11 @@ JENKINS, Adler-32 и CRC-32 - наиболее подходящие хеш-фу�
 
 При первом запуске программы профилировщик ***kcachegrind*** показал результаты:
 
-<img src="OptimisationsImgs/GraphBeforOpt.png" width="500">
+<img src="OptimisationsImgs/GraphBeforOpt.png" width="1000">
 
 \- Результаты из kcashegrind
 
-<img src="PerfProfiler/PerfStart.png" width="500">
+<img src="PerfProfiler/PerfStart.png" width="1000">
 
 \- Результаты из perf
 
@@ -321,7 +321,7 @@ JENKINS, Adler-32 и CRC-32 - наиболее подходящие хеш-фу�
 |Итог:            | 64.28c       |
 |-----------------|--------------|
 
-Время работы программы составило **38.28** секунды.
+Время работы программы составило **64.28** секунды.
 
 Первая функция для оптимизации - хеш-функция.
 
@@ -364,7 +364,7 @@ JENKINS, Adler-32 и CRC-32 - наиболее подходящие хеш-фу�
 
 <summary> Граф профилирования: </summary>
 
-<img src="OptimisationsImgs/crcGraphOpt.png" width="500">
+<img src="OptimisationsImgs/crcGraphOpt.png" width="1000">
 
 </details>
 
@@ -372,7 +372,7 @@ JENKINS, Adler-32 и CRC-32 - наиболее подходящие хеш-фу�
 
 <summary> Данные kcachegrind: </summary>
 
-<img src="OptimisationsImgs/crc32Opt.png" width="500">
+<img src="OptimisationsImgs/crc32Opt.png" width="1000">
 
 </details>
 
@@ -380,7 +380,7 @@ JENKINS, Adler-32 и CRC-32 - наиболее подходящие хеш-фу�
 
 <summary> Данные perf: </summary>
 
-<img src="PerfProfiler/perfCrcOpt.png" width="500">
+<img src="PerfProfiler/perfCrcOpt.png" width="1000">
 
 Посколько perf не видит некоторой функции, будем ориентироваться на данные из kcashegrind.
 
@@ -426,7 +426,7 @@ bool avx_strcmp (list_elem_t * first_str, list_elem_t second_str)
 
 <summary> Граф профилирования: </summary>
 
-<img src="OptimisationsImgs/StrcmpAvxOnlyOpt.png" width="500">
+<img src="OptimisationsImgs/StrcmpAvxOnlyOpt.png" width="1000">
 
 
 </details>
@@ -435,7 +435,7 @@ bool avx_strcmp (list_elem_t * first_str, list_elem_t second_str)
 
 <summary> Данные kcachegrind: </summary>
 
-<img src="OptimisationsImgs/AvxOptOnly.png" width="500">
+<img src="OptimisationsImgs/AvxOptOnly.png" width="1000">
 
 </details>
 
@@ -443,7 +443,7 @@ bool avx_strcmp (list_elem_t * first_str, list_elem_t second_str)
 
 <summary> Данные perf: </summary>
 
-<img src="PerfProfiler/AvxStrcmp.png" width="500">
+<img src="PerfProfiler/AvxStrcmp.png" width="1000">
 
 </details>
 
@@ -490,7 +490,7 @@ asm_avx_strcmp:
 
 <summary> Граф профилирования </summary>
 
-<img src="OptimisationsImgs/AsmAvxStrcmpOpt.png" width="500">
+<img src="OptimisationsImgs/AsmAvxStrcmpOpt.png" width="1000">
 
 
 </details>
@@ -499,7 +499,7 @@ asm_avx_strcmp:
 
 <summary> Данные kcachegrind </summary>
 
-<img src="OptimisationsImgs/AsmAvxStrcmpOptNotGraph.png" width="500">
+<img src="OptimisationsImgs/AsmAvxStrcmpOptNotGraph.png" width="1000">
 
 </details>
 
@@ -507,7 +507,7 @@ asm_avx_strcmp:
 
 <summary> Данные perf </summary>
 
-<img src="PerfProfiler/PerfAsmAvx.png" width="500">
+<img src="PerfProfiler/PerfAsmAvx.png" width="1000">
 
 </details>
 
@@ -534,6 +534,7 @@ asm_avx_strcmp:
  
  Дальнейшие оптимизации не дадут значительного прироста производительности и не дают полезной нагрузки для процесса обучения. 
 
+Цели 
 ## 6. Источники информации
 
 [1]. Хеш-таблицы // codechick.io URL: https://codechick.io/tutorials/dsa/dsa-hash-table (дата обращения: 28.04.2025).
