@@ -35,6 +35,10 @@ $(EXECUTABLE): $(OBJECTS)
 rn:
 	./hashtable.exe
 
+perf:
+	perf record -o perf.data -e instructions,cycles,cache-misses,branches,branch-misses ./$(EXECUTABLE)
+	hotspot perf.data
+
 clean:
 	rm -rf ./src/*.o
 	rm -rf *.exe
