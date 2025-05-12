@@ -1,7 +1,7 @@
 #ifndef HASH_FUNC_HPP
 #define HASH_FUNC_HPP
 
-inline unsigned int Src32HashFunc (const char * elem)
+unsigned int Crc32HashFunc (const char * elem)
 {
     unsigned int hash = 0;
 

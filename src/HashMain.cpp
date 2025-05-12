@@ -4,9 +4,10 @@
 static const char * POS_ANSWER = "We found it!\n";
 static const char * NEG_ANSWER = "Word is not in this text\n";
 
-static const char * PARSED_FILE_NAME     = "../HashTable/Text/ParsedText.txt";
-static const char * HASH_TABLE_DUMP_FILE = "../HashTable/Text/HashTableResult.txt";
-static const char * HASH_TABLE_LENGHTS   = "../HashTable/Text/Lenghts.txt";
+static const char * PARSED_FILE_NAME      = "../HashTable/Text/ParsedText.txt";
+static const char * HASH_TABLE_DUMP_FILE  = "../HashTable/Text/HashTableResult.txt";
+static const char * HASH_TABLE_LENGHTS    = "../HashTable/Text/Lenghts.txt";
+static const char * HASH_TABLE_COLLISIONS = "../HashTable/Text/CollisionsCRC32.txt";
 
 size_t HashCalc (char * pointer_to_data);
 
@@ -21,24 +22,15 @@ void StartHashTable ()
 {
     HASH_TABLE_DATA hash_table = {};
 
-    PrepairFile ();
-
     HashTableInit (&hash_table);
 
     HashTableCreate (&hash_table);
-
-    //OutputHashTableIntoFile (&hash_table);
-
-    time_t t0 = time (0);
-
-    for (int i = 0; 100000000 > i; i++)
+    
+    for (int j = 0; 10 > j; j++)
     {
-        FindTheWord (&hash_table, &hash_table.list[i % 967].leaf[i % 5].list_elem);
+        for (int i = 0; 100000000 > i; i++)
+            FindTheWord (&hash_table, &hash_table.list[i % 967].leaf[i % 5].list_elem);
     }
-
-    time_t t1 = time (0);
-
-    printf ("The programm ran for %lf seconds\n", difftime (t1, t0));
 
     return;
 }
@@ -47,7 +39,7 @@ const char * FindTheWord (HASH_TABLE_DATA * hash_table, list_elem_t * word)
 {
     assert (word);
     
-    unsigned int hash = HashCalc (&word->list_elem_str) % HASH_TABLE_SIZE;
+    unsigned int hash = Crc32HashFunc (&word->list_elem_str) % HASH_TABLE_SIZE;
 
     bool res = FindElemIndex (&hash_table->list[hash], word);
 
@@ -83,7 +75,7 @@ int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
 
     for (int i = 0; n_elems_in_text > i; i++)
     {
-        hash = HashCalc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
+        hash = Crc32HashFunc (&data[i].list_elem_str) % HASH_TABLE_SIZE;
 
         if (CheckAvailabilityOfElem (&hash_table_data->list[hash], &data[i]))
             continue;
@@ -104,18 +96,17 @@ bool CheckAvailabilityOfElem (POINTERS * list, list_elem_t * elem)
     return true;
 }
 
-size_t HashCalc (char * pointer_to_data)
+size_t HashCalc (char * elem)
 {
-    size_t hash = 0;
+    unsigned int hash = 0xFFFFFFFF;
 
-    while (isalpha (*pointer_to_data))
+    while (*elem != '\0')
     {
-        hash = ((hash << 5) + hash) ^ (*pointer_to_data);
-
-        pointer_to_data++;
+        size_t byte = (char) *elem++;
+        hash = (hash >> 8) ^ crc32_table[(hash ^ byte) & 0xFF];
     }
-    
-    return hash;
+
+    return hash ^ 0xFFFFFFFF;
 }
 
 list_elem_t * ReadData (size_t * n_elems_in_text)
@@ -211,6 +202,24 @@ int OutputLenghts (HASH_TABLE_DATA * hash_table)
             if (strlen (&hash_table->list[i].leaf[j].list_elem.list_elem_str) == 17)
                 fprintf (dump_file, "%s\n", hash_table->list[i].leaf[j].list_elem);
         }
+    }
+
+    fclose (dump_file);
+
+    return 0;
+}
+
+int OutputCollisions (HASH_TABLE_DATA * hash_table)
+{
+    FILE * dump_file = fopen (HASH_TABLE_COLLISIONS, "w");
+
+    int size = 0;
+
+    for (int i = 0; HASH_TABLE_SIZE > i; i++)
+    {
+        size = hash_table->list[i].free;
+
+        fprintf (dump_file, "%d\n", size);
     }
 
     fclose (dump_file);
