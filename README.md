@@ -41,7 +41,7 @@
 
   - **Speed** (MHz): avg: 713 high: 1500 min/max: 400/4600:3400 
   
-  - **Flags**: avx avx2 ht lm nx pae sse sse2 sse3 sse4_1 sse4_2 ssse3 vmx#оптимизация-хеш-функции
+  - **Flags**: avx avx2 ht lm nx pae sse sse2 sse3 sse4_1 sse4_2 ssse3 vmx
 
 ## 2. Введение
 
