@@ -1619,7 +1619,6 @@
 11
 6
 17
-disrespectfulness
 2
 7
 9
@@ -2522,7 +2521,6 @@ disrespectfulness
 10
 9
 17
-superstitiousness
 5
 4
 11
@@ -3474,7 +3472,6 @@ superstitiousness
 11
 7
 17
-conscientiousness
 9
 6
 6
@@ -5278,7 +5275,6 @@ conscientiousness
 6
 5
 17
-misunderstandings
 7
 6
 6
@@ -8651,7 +8647,6 @@ misunderstandings
 3
 10
 17
-inappropriateness
 7
 10
 8
@@ -9090,7 +9085,6 @@ inappropriateness
 6
 8
 17
-extraordinariness
 5
 8
 8
@@ -18896,7 +18890,6 @@ extraordinariness
 10
 5
 17
-inconsequentially
 8
 8
 9
@@ -20388,7 +20381,6 @@ inconsequentially
 8
 9
 17
-zusammengehaltene
 3
 6
 5
