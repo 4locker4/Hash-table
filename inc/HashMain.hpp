@@ -8,11 +8,12 @@
 #include <ctype.h>
 #include <immintrin.h>
 #include <time.h>
+#include <ctype.h>
 
 #include "./Parsing.hpp"
 #include "../DL_list/inc/header.h"
 
-const int HASH_TABLE_SIZE = 1000;
+const int HASH_TABLE_SIZE = 1024;
 
 typedef struct 
 {
@@ -29,7 +30,7 @@ typedef struct
 
 } HASH_TABLE_DATA;
 
-void                StartHashTable             ();
+void                TestHashTable             ();
 int                 HashTableInit              (HASH_TABLE_DATA * hash_table_data);
 const char *        FindTheWord                (HASH_TABLE_DATA * hash_table, list_elem_t * word);
 list_elem_t *       ReadData                   (size_t * n_elems_in_text);
@@ -38,11 +39,10 @@ int                 HashTableCreate            (HASH_TABLE_DATA * hash_table_dat
 int                 OutputHashTableIntoFile    (HASH_TABLE_DATA * hash_table);
 int                 OutputLenghts              (HASH_TABLE_DATA * hash_table);
 int                 OutputCollisions           (HASH_TABLE_DATA * hash_table);
+int                 HashTableDtor              (HASH_TABLE_DATA * hash_table_data);
 
-inline unsigned int Src32HashFunc              (const char * elem);
-
-
-
+inline u_int64_t    Src32HashFunc              (const char * elem);
+ 
 static const size_t crc32_table[256] = {
 
     0x00000000, 0xF26B8303,   0xE13B70F7, 0x1350F3F4,   0xC79A971F, 0x35F1141C,   0x26A1E7E8, 0xD4CA64EB,
@@ -79,5 +79,12 @@ static const size_t crc32_table[256] = {
     0x79B737BA, 0x8BDCB4B9,   0x988C474D, 0x6AE7C44E,   0xBE2DA0A5, 0x4C4623A6,   0x5F16D052, 0xAD7D5351
 
 }; // poly 0x1EDC6F41
+
+u_int64_t LenghtCalc    (const char* elem);
+u_int64_t AsciiSumCalc  (const char* elem);
+u_int64_t DJB2Hash      (const char* elem);
+u_int64_t JENKINS       (const char* elem);
+u_int64_t Adler_32      (const char* elem);
+u_int64_t CRC32         (const char* elem);
 
 #endif // HASH_MAIN_HPP

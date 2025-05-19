@@ -1,22 +1,22 @@
 #ifndef HASH_FUNC_HPP
 #define HASH_FUNC_HPP
 
-unsigned inline int Crc32HashFunc (const char * elem)
+inline u_int64_t Crc32HashFunc (const char * elem)
 {
-    unsigned int hash = 0;
+    u_int64_t hash = 0;
 
     __asm__(
         ".intel_syntax noprefix         \n\t"
         "                               \n\t"
         "xor rax, rax                   \n\t"
         "                               \n\t"
-        "mov eax, 0xffffffff            \n\t"
+        "mov rax, 0xffffffffffffffff    \n\t"
         "                               \n\t"
         "jmp 0f                         \n\t"
         "                               \n\t"
         "1:                             \n\t"
         "                               \n\t"
-        "crc32 eax, byte ptr [%[elem]]  \n\t"
+        "crc32 rax, byte ptr [%[elem]]  \n\t"
         "inc %[elem]                    \n\t"
         "                               \n\t"
         "0:                             \n\t"
@@ -24,7 +24,7 @@ unsigned inline int Crc32HashFunc (const char * elem)
         "cmp byte ptr [%[elem]], 0      \n\t"
         "                               \n\t"
         "ja 1b                          \n\t"
-        "mov %[hash], eax               \n\t"
+        "mov %[hash], rax               \n\t"
         "                               \n\t"
         :[hash] "=m"(hash)
         :[elem] "d"(elem)

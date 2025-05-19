@@ -7,18 +7,18 @@ static const char * NEG_ANSWER = "Word is not in this text\n";
 static const char * PARSED_FILE_NAME      = "../HashTable/Text/ParsedText.txt";
 static const char * HASH_TABLE_DUMP_FILE  = "../HashTable/Text/HashTableResult.txt";
 static const char * HASH_TABLE_LENGHTS    = "../HashTable/Text/Lenghts.txt";
-static const char * HASH_TABLE_COLLISIONS = "../HashTable/Text/CollisionsCRC32.txt";
+static const char * HASH_TABLE_COLLISIONS = "../HashTable/Text/Collisions.txt";
 
 size_t HashCalc (char * pointer_to_data);
 
 int main ()
 {
-    StartHashTable ();
+    TestHashTable ();
 
     return 0;
 }
 
-void StartHashTable ()
+void TestHashTable ()
 {
     HASH_TABLE_DATA hash_table = {};
 
@@ -28,6 +28,8 @@ void StartHashTable ()
 
     for (int i = 0; 100000000 > i; i++)
         FindTheWord (&hash_table, &hash_table.list[i % 967].leaf[i % 5].list_elem);
+
+    HashTableDtor (&hash_table);
 
     return;
 }
@@ -62,13 +64,30 @@ int HashTableInit (HASH_TABLE_DATA * hash_table_data)
     return 0;
 }
 
+int HashTableDtor (HASH_TABLE_DATA * hash_table_data)
+{
+    assert (hash_table_data);
+
+    hash_table_data->hash_table_size = 0;
+    hash_table_data->is_init         = false;
+
+    for (int i = 0; HASH_TABLE_SIZE > i; i++)
+        ListDtor (&hash_table_data->list[i]);
+
+    free (hash_table_data->list);
+
+    hash_table_data->list = NULL;
+
+    return 0;
+}
+
 int HashTableCreate (HASH_TABLE_DATA * hash_table_data)
 {
     size_t n_elems_in_text = 0;
 
     list_elem_t * data = ReadData (&n_elems_in_text);
 
-    unsigned int hash = 0;
+    u_int64_t hash = 0;
 
     for (int i = 0; n_elems_in_text > i; i++)
     {
@@ -93,9 +112,10 @@ bool CheckAvailabilityOfElem (POINTERS * list, list_elem_t * elem)
     return true;
 }
 
+// Функция для удобства.
 size_t HashCalc (char * elem)
 {
-    unsigned int hash = 0xFFFFFFFF;
+    u_int64_t hash = 0xFFFFFFFF;
 
     while (*elem != '\0')
     {
@@ -214,7 +234,7 @@ int OutputCollisions (HASH_TABLE_DATA * hash_table)
 
     for (int i = 0; HASH_TABLE_SIZE > i; i++)
     {
-        size = hash_table->list[i].free;
+        size = hash_table->list[i].free - 1;
 
         fprintf (dump_file, "%d\n", size);
     }

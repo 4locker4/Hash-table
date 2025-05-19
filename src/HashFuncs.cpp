@@ -1,8 +1,8 @@
 #include "../inc/HashMain.hpp"
 
-unsigned int LenghtCalc (const char* elem)
+u_int64_t LenghtCalc (const char* elem)
 {
-    unsigned int hash = 0;
+    u_int64_t hash = 0;
 
     while (*elem != '\0')
     {
@@ -13,9 +13,9 @@ unsigned int LenghtCalc (const char* elem)
     return hash;
 }
 
-unsigned int AsciiSumCalc (const char* elem)
+u_int64_t AsciiSumCalc (const char* elem)
 {
-    unsigned int hash = 0;
+    u_int64_t hash = 0;
 
     while (*elem != '\0')
     {
@@ -26,9 +26,9 @@ unsigned int AsciiSumCalc (const char* elem)
     return hash;
 }
 
-unsigned int DJB2Hash (const char* elem)
+u_int64_t DJB2Hash (const char* elem)
 {
-    unsigned int hash = 0;
+    u_int64_t hash = 0;
 
     while (*elem)
     {
@@ -40,9 +40,9 @@ unsigned int DJB2Hash (const char* elem)
     return hash;
 }
 
-unsigned int JENKINS (const char* elem)
+u_int64_t JENKINS (const char* elem)
 {
-    unsigned int hash = 0;
+    u_int64_t hash = 0;
 
     while (*elem != '\0')
     {
@@ -58,7 +58,7 @@ unsigned int JENKINS (const char* elem)
     return hash;
 }
 
-unsigned int Adler_32 (const char* elem)
+u_int64_t Adler_32 (const char* elem)
 {
     size_t s1 = 1;
     size_t s2 = 0;
@@ -71,9 +71,9 @@ unsigned int Adler_32 (const char* elem)
     return ( s2 << 16 ) + s1;
 }
 
-unsigned int CRC32 (const char* elem)
+u_int64_t CRC32 (const char* elem)
 {
-    unsigned int hash = 0xFFFFFFFF;
+    u_int64_t hash = 0xFFFFFFFF;
 
     while (*elem != '\0')
     {
